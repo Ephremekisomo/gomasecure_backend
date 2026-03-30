@@ -318,8 +318,7 @@ app.post('/api/auth/register', upload.single('photo'), async (req, res) => {
 
                     const token = jwt.sign(
                         { id: this.lastID, telephone, role: 'citoyen' },
-                        process.env.JWT_SECRET || 'default_secret',
-                        { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+                        process.env.JWT_SECRET || 'default_secret'
                     );
 
                     res.json({
@@ -360,8 +359,7 @@ app.post('/api/auth/login', (req, res) => {
 
         const token = jwt.sign(
             { id: user.id, telephone: user.telephone, role: user.role },
-            process.env.JWT_SECRET || 'default_secret',
-            { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+            process.env.JWT_SECRET || 'default_secret'
         );
 
         res.json({
@@ -406,8 +404,7 @@ app.post('/api/auth/verify-2fa', (req, res) => {
 
             const token = jwt.sign(
                 { id: user.id, telephone: user.telephone, role: user.role },
-                process.env.JWT_SECRET || 'default_secret',
-                { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+                process.env.JWT_SECRET || 'default_secret'
             );
 
             res.json({

@@ -196,7 +196,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Static files
-app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
+// app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -1048,21 +1048,27 @@ io.on('connection', (socket) => {
 // PAGES
 // =====================
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'index.html'));
-});
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'index.html'));
+// });
 
-app.get('/security-center', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'security-center.html'));
-});
+// app.get('/security-center', (req, res) => {
+//     res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'security-center.html'));
+// });
 
-app.get('/poste', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'poste.html'));
-});
+// app.get('/poste', (req, res) => {
+//     res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'poste.html'));
+// });
 
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'admin.html'));
-});
+// app.get('/admin', (req, res) => {
+//     res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'admin.html'));
+// });
+app.get('/',(req)=>{
+    res.json({
+        success:true,
+        message:'Backend Goma secure '
+    })
+})
 
 // =====================
 // ROUTES - SYSTEM (Admin only)

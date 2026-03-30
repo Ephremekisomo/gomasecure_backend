@@ -168,10 +168,10 @@ db.serialize(() => {
     )`);
 
     // Create admin user if not exist
-    const adminPassword = bcrypt.hashSync('admin123', 10);
+    const adminPassword = bcrypt.hashSync('admin111', 10);
     db.run(`INSERT OR IGNORE INTO users (nom, prenom, telephone, email, password_hash, role, quartier) 
             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        ['Admin', 'Goma', '+243000000000', 'admin@gomasecurity.cd', adminPassword, 'admin', 'Goma']);
+        ['Admin', 'Goma', '+243000000001', 'admin@gomasecurity.cd', adminPassword, 'admin', 'Goma']);
 });
 
 // =====================

@@ -286,6 +286,13 @@ const requireAdmin = (req, res, next) => {
     next();
 };
 
+const requireAdminOrSecurityCenter = (req, res, next) => {
+    if (req.user.role !== 'admin' && req.user.role !== 'security_center') {
+        return res.status(403).json({ error: 'Acces reserve aux administrateurs et au centre de securite' });
+    }
+    next();
+};
+
 const validateRole = (role) => {
     return VALID_ROLES.includes(role);
 };
@@ -852,8 +859,8 @@ app.get('/api/chat/messages/:userId', authenticateToken, requireAdmin, (req, res
         });
 });
 
-// Get all alerts (admin)
-app.get('/api/alerts', authenticateToken, requireAdmin, (req, res) => {
+// Get all alerts (admin and security center)
+app.get('/api/alerts', authenticateToken, requireAdminOrSecurityCenter, (req, res) => {
     const { status, priority, quartier } = req.query;
     
     let query = `SELECT a.*, u.nom, u.prenom, u.telephone, et.nom as type_nom, et.icone, et.couleur
@@ -906,8 +913,8 @@ app.get('/api/alerts/poste/:posteId', (req, res) => {
     });
 });
 
-// Update alert status (admin)
-app.put('/api/alerts/:id/status', authenticateToken, requireAdmin, (req, res) => {
+// Update alert status (admin and security center)
+app.put('/api/alerts/:id/status', authenticateToken, requireAdminOrSecurityCenter, (req, res) => {
     const { status } = req.body;
     const alertId = req.params.id;
 
@@ -926,8 +933,8 @@ app.put('/api/alerts/:id/status', authenticateToken, requireAdmin, (req, res) =>
     );
 });
 
-// Assign alert (admin)
-app.put('/api/alerts/:id/assign', authenticateToken, requireAdmin, (req, res) => {
+// Assign alert (admin and security center)
+app.put('/api/alerts/:id/assign', authenticateToken, requireAdminOrSecurityCenter, (req, res) => {
     const { assigned_to } = req.body;
 
     db.run('UPDATE alerts SET assigned_to = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
@@ -949,7 +956,7 @@ app.put('/api/alerts/:id/assign', authenticateToken, requireAdmin, (req, res) =>
 // ROUTES - STATISTICS
 // =====================
 
-app.get('/api/stats', authenticateToken, requireAdmin, (req, res) => {
+app.get('/api/stats', authenticateToken, requireAdminOrSecurityCenter, (req, res) => {
     const stats = {};
     
     console.log('Stats API called');

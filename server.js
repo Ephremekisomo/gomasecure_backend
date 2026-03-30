@@ -1063,12 +1063,12 @@ io.on('connection', (socket) => {
 // app.get('/admin', (req, res) => {
 //     res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'admin.html'));
 // });
-app.get('/',(req)=>{
-    res.json({
+app.get('/',(req, res)=>{
+    res.status(200).json({
         success:true,
         message:'Backend Goma secure '
-    })
-})
+    });
+});
 
 // =====================
 // ROUTES - SYSTEM (Admin only)

@@ -248,6 +248,12 @@ const uploadVoice = multer({
 });
 
 // =====================
+// CONSTANTS
+// =====================
+
+const VALID_ROLES = ['citoyen', 'admin', 'security_center', 'poste'];
+
+// =====================
 // AUTHENTICATION MIDDLEWARE
 // =====================
 
@@ -272,6 +278,10 @@ const requireAdmin = (req, res, next) => {
         return res.status(403).json({ error: 'Acces reserve aux administrateurs' });
     }
     next();
+};
+
+const validateRole = (role) => {
+    return VALID_ROLES.includes(role);
 };
 
 // =====================
@@ -992,13 +1002,25 @@ app.get('/api/stats', authenticateToken, requireAdmin, (req, res) => {
 // =====================
 
 app.get('/api/user/profile', authenticateToken, (req, res) => {
-    db.get('SELECT id, nom, prenom, telephone, email, quartier, avenue, latitude, longitude, photo_profil, two_fa_enabled, created_at FROM users WHERE id = ?',
+    db.get('SELECT id, nom, prenom, telephone, email, role, quartier, avenue, latitude, longitude, photo_profil, two_fa_enabled, created_at FROM users WHERE id = ?',
         [req.user.id],
         (err, user) => {
             if (err || !user) {
                 return res.status(404).json({ error: 'Utilisateur non trouve' });
             }
             res.json(user);
+        }
+    );
+});
+
+app.get('/api/user/role', authenticateToken, (req, res) => {
+    db.get('SELECT role FROM users WHERE id = ?',
+        [req.user.id],
+        (err, user) => {
+            if (err || !user) {
+                return res.status(404).json({ error: 'Utilisateur non trouve' });
+            }
+            res.json({ role: user.role });
         }
     );
 });
@@ -1268,6 +1290,11 @@ app.get('/api/users', authenticateToken, requireAdmin, (req, res) => {
 app.put('/api/users/:id', authenticateToken, requireAdmin, (req, res) => {
     const { nom, prenom, email, role, quartier } = req.body;
     const userId = req.params.id;
+    
+    // Validate role if provided
+    if (role && !validateRole(role)) {
+        return res.status(400).json({ error: 'Role invalide. Roles valides: ' + VALID_ROLES.join(', ') });
+    }
     
     db.run('UPDATE users SET nom = ?, prenom = ?, email = ?, role = ?, quartier = ? WHERE id = ?',
         [nom, prenom, email, role, quartier, userId],

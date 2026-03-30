@@ -6,6 +6,10 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "db:setup": "node database/setup.js",
+    "db:reset": "rm -f goma_security.db && node database/setup.js",
+    "db:backup": "node database/backup.js",
+    "db:restore": "node database/restore.js",
     "backup": "node scripts/backup.js"
   },
   "keywords": [

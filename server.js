@@ -172,6 +172,12 @@ db.serialize(() => {
     db.run(`INSERT OR IGNORE INTO users (nom, prenom, telephone, email, password_hash, role, quartier) 
             VALUES (?, ?, ?, ?, ?, ?, ?)`,
         ['Admin', 'Goma', '+243000000001', 'admin@gomasecurity.cd', adminPassword, 'admin', 'Goma']);
+    
+    // Create security center user if not exist
+    const securityCenterPassword = bcrypt.hashSync('admin222', 10);
+    db.run(`INSERT OR IGNORE INTO users (nom, prenom, telephone, email, password_hash, role, quartier) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        ['Security', 'Center', '+243000000002', 'security@gomasecurity.cd', securityCenterPassword, 'security_center', 'Goma']);
 });
 
 // =====================

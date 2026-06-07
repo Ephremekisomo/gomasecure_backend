@@ -859,6 +859,16 @@ app.get('/api/chat/messages/:userId', authenticateToken, requireAdmin, (req, res
         });
 });
 
+// Get admin user ID (public endpoint)
+app.get('/api/chat/admin-id', (req, res) => {
+    db.get('SELECT id FROM users WHERE role = "admin" LIMIT 1', [], (err, row) => {
+        if (err || !row) {
+            return res.status(500).json({ error: 'Admin non trouve' });
+        }
+        res.json({ adminId: row.id });
+    });
+});
+
 // Get all alerts (admin and security center)
 app.get('/api/alerts', authenticateToken, requireAdminOrSecurityCenter, (req, res) => {
     const { status, priority, quartier } = req.query;
@@ -1069,6 +1079,33 @@ io.on('connection', (socket) => {
         io.to('security-center').emit('reinforcement-call', data);
         // Also broadcast to all for debugging
         io.emit('reinforcement-call', data);
+    });
+
+    // Handle citizen call - forward to admin/security center
+    socket.on('citizen-call', (data) => {
+        console.log('Citizen call received:', data);
+        // Broadcast to admin/security center
+        io.to('security-center').emit('admin-incoming-call', data);
+        // Also send to all admins
+        io.emit('admin-incoming-call', data);
+    });
+
+    // Handle admin answer - forward to citizen
+    socket.on('admin-answer-call', (data) => {
+        console.log('Admin answered call:', data);
+        io.emit('admin-answer-call', data);
+    });
+
+    // Handle call rejection
+    socket.on('reject-call', (data) => {
+        console.log('Call rejected:', data);
+        io.emit('call-rejected', data);
+    });
+
+    // Handle call end
+    socket.on('end-call', (data) => {
+        console.log('Call ended:', data);
+        io.emit('call-ended', data);
     });
 
     socket.on('disconnect', () => {
